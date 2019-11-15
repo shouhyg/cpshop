@@ -16,7 +16,7 @@ class Index extends Backend
 
     public function welcome()
     {
-        $rand = Random::nozero();
+        $rand = Random::numeric();
         echo $rand;
        // return $this->fetch();
     }

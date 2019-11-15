@@ -20,4 +20,6 @@ return[
         'hidden' => 4, //封号
 
     ],
+    //自动定位控制器
+    'controller_auto_search' => true,
 ];
