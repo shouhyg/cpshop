@@ -56,19 +56,11 @@ class Admin extends Backend
      */
     public function add(){
         if ($this->request->isPost()) {
-           // print_r(input('row/a'));die;
-            $data = [
-                'username'=>input('post.username',''),
-                'nickname'=>input('post.nickname',''),
-                'password'=>input('post.password',''),
-                'password2'=>input('post.password2',''),
-                'sex'=>input('post.sex','3'),
-                'phone'=>input('post.phone',''),
-                'email'=>input('post.email',''),
-                'role'=>input('post.role',''),
-                'remark'=>input('post.remark',''),
-                '__token__'=>input('post.__token__',''),
-            ];
+
+            $data = input('row/a'); 
+            if (empty($data)) {
+                $this->error();
+            }
             /**通过实例化验证器来实现验证
                 $validate  = new \app\admin\validate\Admin();
                 $validate->scene('add')->check($data);

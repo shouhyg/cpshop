@@ -1,17 +1,17 @@
 {include file="common/header"}
 <article class="page-container">
 	<form action="{:url('admin/admin/add')}" method="post" class="form form-horizontal" id="form-admin-add">
-		{:token()}
+		<input type="hidden" name="row[__token__]" value="{$Request.token}" />
 	<div class="row cl">
 		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>登录名：</label>
 		<div class="formControls col-xs-8 col-sm-9">
-			<input type="text" class="input-text" value="" placeholder="" id="row[username]" name="username">
+			<input type="text" class="input-text" value="" placeholder="" id="username" name="row[username]">
 		</div>
 	</div>
 	<div class="row cl">
 		<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>昵称：</label>
 		<div class="formControls col-xs-8 col-sm-9">
-			<input type="text" class="input-text" value="" placeholder="" id="row[nickname]" name="nickname">
+			<input type="text" class="input-text" value="" placeholder="" id="nickname" name="row[nickname]">
 		</div>
 	</div>
 	<div class="row cl">
