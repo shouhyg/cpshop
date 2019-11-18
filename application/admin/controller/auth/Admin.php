@@ -7,12 +7,15 @@
  * Time: 15:22
  */
 namespace app\admin\controller\auth;
+use app\admin\controller\Ajax;
 use app\common\controller\Backend;
 use app\common\model\AdminUser;
+use fast\Random;
 
 
 class Admin extends Backend
 {
+    //protected $noNeedLogin = ['add'];
     protected $model = null;
     public function initialize()
     {
@@ -53,16 +56,18 @@ class Admin extends Backend
      */
     public function add(){
         if ($this->request->isPost()) {
+           // print_r(input('row/a'));die;
             $data = [
                 'username'=>input('post.username',''),
                 'nickname'=>input('post.nickname',''),
                 'password'=>input('post.password',''),
-                'password2'=>input('post.passworrd2',''),
+                'password2'=>input('post.password2',''),
                 'sex'=>input('post.sex','3'),
-                'phone'=>input('post.sephonex',''),
+                'phone'=>input('post.phone',''),
                 'email'=>input('post.email',''),
                 'role'=>input('post.role',''),
                 'remark'=>input('post.remark',''),
+                '__token__'=>input('post.__token__',''),
             ];
             /**通过实例化验证器来实现验证
                 $validate  = new \app\admin\validate\Admin();
@@ -74,14 +79,30 @@ class Admin extends Backend
              * 该方法验证成功时会返回一个true 验证失败时 返回错误提示信息
              */
               $result = $this->validate($data,'app\admin\validate\Admin.add');
-              if ($result != true ) {
-                  var_dump($result);
+
+              //验证未通过
+              if ($result !== true) {
+                  if(AJAX){
+                      return json(['code'=>'1','msg'=>$result]);
+                  }
+                  return $this->error($result);
               }
-              var_dump($result);
 
-
-            print_r($data);die;
-
+                //验证通过 save 方法会默认过滤掉 非数据库的字段 如果只要插入某些字段可以通过allowfield() 方法来设置要插入的字段
+                $data['salt'] = Random::alnum();
+                $data['password'] = md5(md5($data['password']).$data['salt']);
+                $res = $this->model->save($data);
+                if ($res === false) {
+                    //插入失败
+                    if (AJAX) {
+                        return json(['code'=>'1','msg'=>'插入失败']);
+                    }
+                    $this->error('插入失败');
+                }
+                if (AJAX) {
+                    return json(['code'=>2,'msg'=>'添加失败']);
+                }
+                $this->success('添加成功');
         }
         return $this->fetch();
 

@@ -146,7 +146,7 @@ class Auth
         }
 
         //验证密码
-        if ($adminuser->password != md5(md5($password.$adminuser->salt))) {
+        if ($adminuser->password != md5(md5($password).$adminuser->salt)) {
             $adminuser->loginfailure++;
             $adminuser->save();
             $this->setError('Password is incorrect');
