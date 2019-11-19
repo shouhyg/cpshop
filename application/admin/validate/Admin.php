@@ -63,6 +63,7 @@ class Admin extends Validate
      */
     protected $scene = [
       'add'=>['username','nickname','__token__','phone','email','password','password2','sex'],
+      'edit'=>['username','nickname','__token__','phone','email','sex'],
         //'add'=>['username'],
 
     ];

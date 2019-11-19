@@ -8,6 +8,7 @@
  */
 namespace app\admin\controller\auth;
 use app\admin\controller\Ajax;
+use think\Validate;
 use app\common\controller\Backend;
 use app\common\model\AdminUser;
 use fast\Random;
@@ -30,11 +31,18 @@ class Admin extends Backend
      */
     public function Index()
     {
-
-        $list = AdminUser::All();
+        $username = input('username','');
+        $where[] = ['status','=',1];
+        if ($username) {
+            $where[] = ['username','like','%'.$username.'%'];
+        }
+        $list = $this->model->where($where)->paginate(2,false,['query'=>request()->param()]);
+        echo $this->model->getLastSql();
+        $total = $list->total();
         $param = array(
             'minDate'=>'',
             'maxDate'=>'',
+            'total'=>$total,
         );
 
         return $this->fetch('',[
@@ -57,9 +65,9 @@ class Admin extends Backend
     public function add(){
         if ($this->request->isPost()) {
 
-            $data = input('row/a'); 
+            $data = input('row/a');
             if (empty($data)) {
-                $this->error();
+                $this->error('缺少参数');
             }
             /**通过实例化验证器来实现验证
                 $validate  = new \app\admin\validate\Admin();
@@ -97,6 +105,72 @@ class Admin extends Backend
                 $this->success('添加成功');
         }
         return $this->fetch();
+
+    }
+
+    /**
+     * 编辑管理员
+     */
+    public function edit()
+    {
+        $id = empty(intval(input('id'))) ? $this->error('编辑失败缺少参数') : intval(input('id'));
+        $row = $this->model->get($id);
+        if (!$row) {
+            $this->error('记录不存在');
+        }
+
+        if ($this->request->isPost()) {
+            $data  = empty(input('row/a')) ? $this->error('缺少参数') : input('row/a');
+            $rule = [
+                'username'=>'require|alphaDash|length:4,16|unique:admin_user,'.$id,
+                'nickname'=>'require|length:4,16|unique:admin_user,'.$id,
+                'sex'=>'require|in:1,2,3',
+                'phone'=>'require|mobile|unique:admin_user,'.$id,
+                'email'=>'require|email|unique:admin_user,'.$id,
+                '__token__'=>'require|token'
+            ];
+            $field = [
+                'username'=>'登录名',
+                'nickname'=>'昵称',
+                '__token__'=>'token',
+                'phone'=>'手机号',
+                'email'=>'邮箱',
+            ];
+            $validate = new Validate($rule,[],$field);
+            $res = $validate->check($data);
+            if (true !== $res) {
+                $this->error($validate->getError());
+            }
+
+            // $row 为通过查询返回的对象，通过该对象调用save方法来更新 框架会自动判断是跟新还是插入
+            $result  = $row->save($data);
+            //echo $row->getLastSql();
+            if ($result) {
+                $this->success('更新成功');
+            } else {
+                $this->error('更新失败');
+            }
+        }
+
+        return  $this->fetch('edit',[
+                    'data'=>$row,
+                ]);
+    }
+
+    /**
+     * 删除管理员
+     */
+    public function del($id=null)
+    {
+        $id = intval($id);
+        if (empty($id)) {
+            return ['status'=>'fault','msg'=>'删除失败'];
+        }
+        $res = $this->model->where(['id'=>$id])->delete();
+        if (!$res) {
+            return ['status'=>'fault','msg'=>'删除失败'];
+        }
+        return ['status'=>'success','msg'=>'删除成功'];
 
     }
 }
