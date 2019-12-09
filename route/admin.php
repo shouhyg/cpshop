@@ -15,3 +15,11 @@ Route::rule('admin/admin/add','admin/auth.admin/add'); //添加管理员 多级�
 Route::rule('admin/admin/edit','admin/auth.admin/edit');
 //管理员删除操作
 Route::rule('admin/admin/del','admin/auth.admin/del');
+
+//角色组添加
+Route::rule('admin/group/index','admin/auth.group/index');
+Route::rule('admin/group/add','admin/auth.group/add');
+
+//添加菜单规则
+Route::rule('admin/rule/add', 'admin/auth.rule/add');
+Route::rule('admin/rule/edit', 'admin/auth.rule/edit');

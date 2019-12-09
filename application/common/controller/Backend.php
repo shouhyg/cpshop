@@ -73,6 +73,21 @@ class Backend extends Controller
      */
     public function loadLang()
     {
-        Lang::load(APP_PATH.'/'.$this->request->module().'/lang/'.$this->request->langset().'/'.$this->request->controller().'.php');
+        $controller = $this->request->controller();
+        //解决当使用多级控制器和路由的时 因为$this->request->controller() 返回类似auth.rule 的值 而导致无法正常加载路由文件
+        if(strpos($controller,'.')  !== false ){
+            $controller  =   str_replace('.','/',$controller);
+        }
+        Lang::load(APP_PATH.'/'.$this->request->module().'/lang/'.$this->request->langset().'/'.$controller.'.php');
+    }
+
+    /**
+     * 渲染配置信息
+     * @param $name 键名或者数组
+     * @param $value 值
+     */
+    protected function assignconfig($name, $value)
+    {
+        $this->view->config = array_merge($this->view->config ? $this->view->config : [] , is_array($name) ? $name : [$name => $value]);
     }
 }

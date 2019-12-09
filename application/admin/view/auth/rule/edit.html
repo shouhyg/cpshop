@@ -1,0 +1,157 @@
+﻿{include file="common/header"}
+<article class="page-container">
+	<form action="{:url('admin/rule/edit',['id'=>$data.id])}" method="post" class="form form-horizontal" id="form-admin-role-add">
+		{:token()}
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">是否为菜单：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<dl class="permission-list">
+					<dt>
+						<label>
+							<input type="radio" {if $data.ismenu == 1 } checked="checked"  {/if} value="1" id="ismenu-1" name="row[ismenu]"  >是
+						</label> &nbsp&nbsp
+						<label>
+							<input type="radio" value="0"  {if $data.ismenu == 0 } checked="checked"  {/if} id="ismenu-2" name="row[ismenu]" >否
+						</label>
+					</dt>
+
+				</dl>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>父级：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				{:build_select('row[pid]',$ruledata,null,['class'=>'input-text'])}
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" id="rule-id" name="row[name]" value="{$data.name}" class="input-text" placeholder="{:lang('Menu tips')}">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>标题：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" id="title-id" name="row[title]" class="input-text" placeholder="">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>图标：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" id="icon-id" name="row[icon]" class="input-text" placeholder="">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>权重：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" id="weigh-id" name="row[weigh]" class="input-text" placeholder="">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>规则条件：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="textarea" id="-id" name="row[condition]" class="textarea radius" placeholder="">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>备注：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="textarea" id="" name="row[remark]" class="textarea radius" placeholder="">
+			</div>
+		</div>
+
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">状态：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+			<dl class="permission-list">
+				<dt>
+					<label>
+						<input type="radio" id="radio-1" name="row[status]" checked>显示
+					</label> &nbsp&nbsp
+					<label>
+						<input type="radio" id="radio-2" name="row[status]" >隐藏
+					</label>
+				</dt>
+
+			</dl>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="submit" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+	</form>
+</article>
+
+{include file="common/script"}
+<!--请在下方写此页面业务相关的脚本-->
+<!--请在下方写此页面业务相关的脚本 -->
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+$(function(){
+
+	//点击选择是否为菜单时 修改相应的 提示信息
+	$("#ismenu-1").click(function(){
+		$("#rule-id").attr('placeholder',"{:lang('Menu tips')}")
+	});
+	$("#ismenu-2").click(function(){
+		$("#rule-id").attr('placeholder',"{:lang('Node tips')}")
+	});
+
+
+	$("#form-admin-role-add").validate({
+		rules: {
+			"row[name]": {
+				// required: true,
+				// minlength: 4,
+			},
+			"row[title]": {
+				// required: true,
+				// minlength: 4,
+			},
+			"row[weigh]": {
+				// required: true,
+				// digits: true,
+			},
+		},
+		messages: {
+			"row[name]": {
+				'required': '必须输入规则名称',
+				'minlengh': '最少4个字符',
+			},
+			"row[title]": {
+				'required': '必须输入标题',
+				'minlengh': '最少4个字符',
+			},
+			"row[weigh]": {
+				'required': '必须输入权重',
+				'digits': '必须输入正整数',
+			},
+		},
+		onkeyup: false,
+		focusCleanup: true,
+		success: "valid",
+		submitHandler: function (form) {
+
+				$(form).formSubmit();
+			// var index = parent.layer.getFrameIndex(window.name);
+			// parent.layer.close(index);
+		}
+	});
+});
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+{include file="common/footer"}
